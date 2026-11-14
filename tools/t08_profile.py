@@ -83,11 +83,23 @@ def _notes(arts, children):
     print("\n## Ghi chú kiểm tay 3 case (C2)\n")
     a11 = arts["a0011"]
     print(f"- **a0011** ({_brief(a11)}).")
+    for p in a11["parent_ids"]:
+        print(f"  - cha {p}: {_brief(arts[p])}")
     for c in sorted(children.get("a0011", [])):
         print(f"  - con {c}: {_brief(arts[c])}")
     print("  → frame **dùng chung 2 người**: xoá theo yêu cầu của subj_01 sẽ xoá luôn dữ liệu của subj_00 "
-          "⇒ phải `escalate` (R7). Con a0012 (face_crop) chỉ mang subj_00 → lineage và `subject_ids` không khớp nhau; "
-          "đúng nguyên tắc *lineage để TÌM, `subject_ids` để QUYẾT* (con không thuộc phạm vi DR-001).")
+          "⇒ phải `escalate` (R7). Con a0012 (face_crop) chỉ mang subj_00 → không thuộc phạm vi DR-001 "
+          "(*lineage để TÌM, `subject_ids` để QUYẾT*).")
+    # catalog mâu thuẫn: con có subject mà KHÔNG cha nào có -> data-catalog REWORK
+    bad = []
+    for aid, a in sorted(arts.items()):
+        if a["parent_ids"]:
+            par_subj = set().union(*(arts[p]["subject_ids"] for p in a["parent_ids"]))
+            miss = sorted(set(a["subject_ids"]) - par_subj)
+            if miss and a["type"] != "training_export":
+                bad.append(f"{aid} (thiếu ở cha: {miss})")
+    print(f"  → Lineage mâu thuẫn (con có subject mà cha không có, trừ export): **{len(bad)}** artefact: "
+          f"{bad} ⇒ `data-catalog` cần REWORK.")
     a156 = arts["a0156"]
     print(f"- **a0156** ({_brief(a156)}, uri={a156['uri']}).")
     print("  → backup nằm ở kho có ACL `vendor-x`, đội data-platform **không có quyền xoá** ⇒ `escalate` (R4), "

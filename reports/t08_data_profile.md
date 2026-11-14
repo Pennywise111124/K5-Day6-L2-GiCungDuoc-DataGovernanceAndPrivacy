@@ -46,9 +46,11 @@
 ## Ghi chú kiểm tay 3 case (C2)
 
 - **a0011** (type=frame, subject_ids=['subj_00', 'subj_01'], parent_ids=['a0001'], acl=['data-platform']).
+  - cha a0001: type=raw_video, subject_ids=['subj_00'], parent_ids=[], acl=['data-platform']
   - con a0012: type=face_crop, subject_ids=['subj_00'], parent_ids=['a0011'], acl=['data-platform']
   - con a0014: type=annotation, subject_ids=['subj_00', 'subj_01'], parent_ids=['a0011'], acl=['data-platform']
-  → frame **dùng chung 2 người**: xoá theo yêu cầu của subj_01 sẽ xoá luôn dữ liệu của subj_00 ⇒ phải `escalate` (R7). Con a0012 (face_crop) chỉ mang subj_00 → lineage và `subject_ids` không khớp nhau; đúng nguyên tắc *lineage để TÌM, `subject_ids` để QUYẾT* (con không thuộc phạm vi DR-001).
+  → frame **dùng chung 2 người**: xoá theo yêu cầu của subj_01 sẽ xoá luôn dữ liệu của subj_00 ⇒ phải `escalate` (R7). Con a0012 (face_crop) chỉ mang subj_00 → không thuộc phạm vi DR-001 (*lineage để TÌM, `subject_ids` để QUYẾT*).
+  → Lineage mâu thuẫn (con có subject mà cha không có, trừ export): **4** artefact: ["a0011 (thiếu ở cha: ['subj_01'])", "a0067 (thiếu ở cha: ['subj_05'])", "a0123 (thiếu ở cha: ['subj_09'])", "a0179 (thiếu ở cha: ['subj_13'])"] ⇒ `data-catalog` cần REWORK.
 - **a0156** (type=backup, subject_ids=['subj_11'], parent_ids=['a0155'], acl=['vendor-x'], uri=mock://glacier/backup/a0156).
   → backup nằm ở kho có ACL `vendor-x`, đội data-platform **không có quyền xoá** ⇒ `escalate` (R4), cần nhà cung cấp xác nhận xoá.
 - **a0211** (training_export, 10 subjects, 12 cha).
