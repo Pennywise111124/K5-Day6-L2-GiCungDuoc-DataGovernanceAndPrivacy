@@ -78,7 +78,7 @@ Xem `sections/09_limitations_ethics.md`. Không tuyên bố đạt GDPR / luật
 
 ## 10 · Team contribution
 
-Chi tiết: `reports/team_contributions.csv`. Nhóm 4 người; commit `loversky02`, `Tin Duong` là của repo starter. Code `review.py` (vai D) do A commit; report này do B gộp và commit thay D.
+Chi tiết: `reports/team_contributions.csv`. Nhóm 4 người; commit `loversky02`, `Tin Duong` là của repo starter.
 
 | Học viên | Git author/email | Module / vai trò | Commit SHA | Trình bày? |
 |---|---|---|---|---|
