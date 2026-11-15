@@ -8,7 +8,7 @@
 |---|---|
 | Group ID | GiCungDuoc |
 | Challenge | T08 · Retention & Delete Request Simulator |
-| Thành viên (4) + vai trò | 1. Nguyễn Văn Đại (Lead/Integrator) · 2. Nguyễn Quốc Vương (Core algorithm) · 3. giappd-ai (Data & fixtures + QA/metric) · 4. Lê Duy Bảo (Human review + report) |
+| Thành viên (4) + vai trò | 1. Nguyễn Văn Đại (Lead/Integrator) · 2. Nguyễn Quốc Vương (Core algorithm) · 3. Phan Đình Giáp (Data & fixtures + QA/metric) · 4. Lê Duy Bảo (Human review + report) |
 | Git URL | https://github.com/Pennywise111124/K5-Day6-L2-GiCungDuoc-DataGovernanceAndPrivacy |
 | Tag `demo-180m` (commit) | chưa gắn tại thời điểm viết report |
 | Tag `final-24h` (commit) | chưa gắn tại thời điểm viết report |
@@ -84,7 +84,7 @@ Chi tiết: `reports/team_contributions.csv`. Nhóm 4 người; commit `loversky
 |---|---|---|---|---|
 | Nguyễn Văn Đại | Danaai | Integration / pipeline / store | 216f04c, 3489952, cdbde7d, de8e31d, 11db8a8, 343c368, 02e62ad | |
 | Nguyễn Quốc Vương | vuomg / vug10032004@gmail.com | Core algorithm + baseline | 9ac6fb4, b334a4e, 3810fdc, 8d83d7b, 9767932, 57e85f7 | |
-| giappd-ai | giappdhe140952@gmail.com | Data + self-check GT + tests + metric | 6ac9c66, 6cc97c3, dde1a51, 223f261, 2dcdc00, f72c08c | |
+| Phan Đình Giáp | giappd-ai / giappdhe140952@gmail.com | Data + self-check GT + tests + metric | 6ac9c66, 6cc97c3, dde1a51, 223f261, 2dcdc00, f72c08c | |
 | Lê Duy Bảo | baodu1204 / duybaole2004@gmail.com | Review (DPO) + report | chưa có commit | |
 
 ## 11 · References
