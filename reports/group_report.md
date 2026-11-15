@@ -85,7 +85,7 @@ Chi tiết: `reports/team_contributions.csv`. Nhóm 4 người; commit `loversky
 | Nguyễn Văn Đại | Danaai | Integration / pipeline / store | 216f04c, 3489952, cdbde7d, de8e31d, 11db8a8, 343c368, 02e62ad | |
 | Nguyễn Quốc Vương | vuomg / vug10032004@gmail.com | Core algorithm + baseline | 9ac6fb4, b334a4e, 3810fdc, 8d83d7b, 9767932, 57e85f7 | |
 | Phan Đình Giáp | giappd-ai / giappdhe140952@gmail.com | Data + self-check GT + tests + metric | 6ac9c66, 6cc97c3, dde1a51, 223f261, 2dcdc00, f72c08c | |
-| Lê Duy Bảo | baodu1204 / duybaole2004@gmail.com | Review (DPO) + report | chưa có commit | |
+| Lê Duy Bảo | baodu1204 / duybaole2004@gmail.com | Review (DPO) + report | d06157a, ce04980 | |
 
 ## 11 · References
 
@@ -103,4 +103,4 @@ Chi tiết: `reports/team_contributions.csv`. Nhóm 4 người; commit `loversky
 - [x] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy.
 - [x] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
 - [x] Có license/source provenance, seed, offline environment, N.
-- [ ] Mỗi thành viên có ≥1 commit thực chất (Lê Duy Bảo chưa có).
+- [x] Mỗi thành viên có ≥1 commit thực chất.
