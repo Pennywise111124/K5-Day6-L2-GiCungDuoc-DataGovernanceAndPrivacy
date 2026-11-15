@@ -1,44 +1,81 @@
-"""src/pipeline.py — T08 (người A) · KHUNG A3: chạy được end-to-end với chính sách STUB.
-
-Stub: mọi artefact có subject_id của request trong subject_ids -> action = "delete".
-Chưa có lineage thật (B), luật thật (B), hàng chờ duyệt (D). Mục đích: `src.main` exit 0,
-actions.csv đủ 158 dòng để cả nhóm chạy được. Sang A4 sẽ thay bằng bản nối module thật.
-"""
+"""src/pipeline.py — T08 (người A): load -> process (dry-run) -> rank -> review -> decide."""
 import json
+from pathlib import Path
 
 import pandas as pd
 
 from .common.decision import Decision, write_decision
 from .common.manifest import verify_manifest
+from .common.review import load_review_decisions, write_review_queue
 
-COLS = ["item_id", "request_id", "artefact_id", "artefact_type", "action",
-        "reason_code", "rule_id", "score", "reviewed_by"]
+from .t08 import graph, policy, review
+from .t08.store import MockStore
+
+POLICY_PATH = "configs/t08_policy.yaml"
+COLS = ["item_id", "request_id", "artefact_id", "artefact_type", "action", "reason_code", "rule_id", "score", "reviewed_by"]
 
 
 def load(ctx):
     problems = verify_manifest(ctx.input_dir / "manifest.csv")
     if problems:
         raise ValueError(f"provenance check failed: {problems[:3]}")
-    requests = json.loads((ctx.input_dir / "requests.json").read_text(encoding="utf-8"))
-    artefacts = json.loads((ctx.input_dir / "data_graph.json").read_text(encoding="utf-8"))["artefacts"]
-    return {"requests": requests, "arts": {a["artefact_id"]: a for a in artefacts}}
+    return {"requests": json.loads((ctx.input_dir / "requests.json").read_text(encoding="utf-8")),
+            "arts": graph.load_graph(ctx.input_dir / "data_graph.json"),
+            "policy": policy.load_policy(ctx.param("policy_path", POLICY_PATH))}
+
+
+def process(ctx, data):
+    arts, ch = data["arts"], graph.children_map(data["arts"])
+    rows = []
+    for req in data["requests"]:
+        for aid in graph.scope(arts, ch, req["subject_id"]):
+            action, code, rule = policy.decide(aid, arts, req, data["policy"])
+            rows.append({"item_id": f"{req['request_id']}:{aid}", "request_id": req["request_id"], "artefact_id": aid,
+                         "artefact_type": arts[aid]["type"], "action": action, "reason_code": code, "rule_id": rule,
+                         "score": 0 if action == "delete" else 1, "reviewed_by": ""})
+            ctx.audit.log(actor="pipeline", action=f"plan:{action}", item_id=aid, reason=code, rule_id=rule,
+                          request_id=req["request_id"])
+    df = pd.DataFrame(rows, columns=COLS)
+    df.to_csv(ctx.out("deletion_plan.csv"), index=False)
+    return df
+
+
+def decide_requests(ctx, actions, warns):
+    owner = ctx.config.get("owner", "TODO-owner")
+    statuses = []
+    for rid, g in actions.groupby("request_id", sort=True):
+        exc = g[g.action != "delete"]
+        unsigned = int((exc.reviewed_by.fillna("") == "").sum())
+        if unsigned:
+            d = Decision("HOLD", "PENDING_DPO_REVIEW", f"{unsigned} exceptions not signed", owner, rid)
+        elif (g.action == "retain_legal_hold").any():
+            d = Decision("HOLD", "LEGAL_HOLD_ACTIVE", "retained until hold is lifted", owner, rid)
+        else:
+            d = Decision("GO", "ERASURE_COMPLETE" if exc.empty else "ERASURE_DONE_EXCEPTIONS_SIGNED", "request closed", owner, rid)
+        write_decision(d, ctx.out(f"decisions/{rid}.json"), ctx.out("decision_log.csv"))
+        statuses.append(d.status)
+    if warns:
+        write_decision(Decision("REWORK", "LINEAGE_INCONSISTENT", f"{len(warns)} lineage warnings", owner, "data-catalog",
+                                metrics={"warnings": warns}), ctx.out("decisions/data-catalog.json"), ctx.out("decision_log.csv"))
+    n_go = statuses.count("GO")
+    overall = Decision("GO" if n_go == len(statuses) else "HOLD", "ALL_CLOSED" if n_go == len(statuses) else "OPEN_REQUESTS",
+                       f"{n_go}/{len(statuses)} requests GO", owner, "t08-all")
+    write_decision(overall, ctx.out("decision.json"), ctx.out("decision_log.csv"))
 
 
 def run(ctx):
-    # BẮT BUỘC giữ: tests/test_cli.py chạy pipeline với track t02 và chờ exit 3.
-    if ctx.track != "t08":
+    if ctx.track != "t08":   # giữ test có sẵn tests/test_cli.py (chạy t02 -> phải exit 3)
         raise NotImplementedError(f"this group pipeline only implements t08, got {ctx.track}")
-
     data = load(ctx)
-    rows = [
-        {"item_id": f"{r['request_id']}:{aid}", "request_id": r["request_id"], "artefact_id": aid,
-         "artefact_type": a["type"], "action": "delete", "reason_code": "STUB", "rule_id": "STUB",
-         "score": 0, "reviewed_by": ""}
-        for r in data["requests"]
-        for aid, a in sorted(data["arts"].items())
-        if r["subject_id"] in a["subject_ids"]
-    ]
-    pd.DataFrame(rows, columns=COLS).to_csv(ctx.out("actions.csv"), index=False)
-    write_decision(
-        Decision("HOLD", "STUB", "pipeline stub - chua co chinh sach that", ctx.config["owner"], "t08-all"),
-        ctx.out("decision.json"), ctx.out("decision_log.csv"))
+    actions = process(ctx, data)
+    queue = review.build_queue(actions, int(ctx.param("budget", 100)))
+    write_review_queue(queue, ctx.out("review_queue.csv"))
+    review.render_review_table(queue, ctx.out("review_queue.html"))
+    reviewed_path = ctx.output_dir / "review_queue_reviewed.csv"
+    if reviewed_path.exists():
+        actions = review.apply_review(actions, load_review_decisions(reviewed_path), ctx.audit)
+    actions.to_csv(ctx.out("actions.csv"), index=False)
+    ctx.stats["n_items"] = len(actions)
+    if not ctx.param("dry_run", True):
+        ctx.stats["store"] = MockStore(ctx.out("mock_store_state.json")).execute(actions, ctx.audit)
+    decide_requests(ctx, actions, graph.lineage_warnings(data["arts"]))
