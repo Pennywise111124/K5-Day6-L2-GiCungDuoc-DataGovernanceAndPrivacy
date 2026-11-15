@@ -11,7 +11,7 @@
 | Thành viên (4) + vai trò | 1. Nguyễn Văn Đại (Lead / Integrator, kiêm Human review + report) · 2. Nguyễn Quốc Vương (Core algorithm) · 3. Phan Đình Giáp (Data & fixtures + QA / metric) · 4. Lê Duy Bảo (Human review + report) |
 | Git URL | https://github.com/Pennywise111124/K5-Day6-L2-GiCungDuoc-DataGovernanceAndPrivacy |
 | Tag `demo-180m` (commit) | `81a5576` (đã push) |
-| Tag `final-24h` (commit) | `__________` (điền sau khi gắn tag) |
+| Tag `final-24h` (commit) | xem trang Tags của repo (https://github.com/Pennywise111124/K5-Day6-L2-GiCungDuoc-DataGovernanceAndPrivacy/tags) |
 | Deadline (giờ VN) | +24h sau buổi lab 14/11/2026 |
 
 ## 01 · Problem statement
@@ -120,7 +120,7 @@ Commit `8bf4a6b` ("nothing") không có nội dung nên không được tính ch
 |---|---|---|
 | https://gdpr-info.eu/art-17-gdpr/ | 14/11/2026 | Quyền xoá và các ngoại lệ (Art.17(3)(e)) → cơ sở luật R2/R3 trong ví dụ giảng dạy |
 | https://openlineage.io/docs/spec/examples | 15/11/2026 | Chuẩn mô tả lineage tương ứng trường `parent_ids` trong `data_graph.json` |
-| Luật 91/2025; Nghị định 356/2025 — `[URL văn bản chính thức bạn đã mở]` | `[ngày xem]` | Quyền xoá theo pháp luật Việt Nam; cần pháp chế xác nhận hiệu lực và phạm vi |
+| Luật 91/2025; Nghị định 356/2025 — `` | `` | Quyền xoá theo pháp luật Việt Nam; cần pháp chế xác nhận hiệu lực và phạm vi |
 
 ---
 
