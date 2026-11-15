@@ -8,6 +8,12 @@
 4. **Người duyệt là thành viên nhóm đóng vai DPO**, không có thẩm quyền pháp lý. Mọi mục "đã ký" chỉ có nghĩa trong mô phỏng.
 5. **Mọi `identity_verified = true`** trong fixture nên R1 chỉ được kiểm bằng test mini fixture, chưa có yêu cầu thật bị từ chối vì danh tính.
 
+### Nhận xét phản biện
+
+- Mục tiêu các phần "Giới hạn của bằng chứng" và "Rủi ro ngược chiều" đã làm tốt việc đặt ranh giới trách nhiệm: báo cáo nói rõ dữ liệu là synthetic, bộ chấm là self-check và không tuyên bố tuân thủ pháp lý. Đây là cách viết đáng khen vì tránh lẫn lộn giữa "mã hoạt động theo chính sách" với "chính sách đã hợp lệ theo luật".
+- Tuy nhiên, phần này còn có thể mạnh hơn bằng cách nêu thêm: (i) độ lệch chọn mẫu do chỉ dùng 1 đồ thị và 10 request, (ii) tác động của giả định catalog/subject lineage lên kết quả thực tiễn, và (iii) rủi ro về công bằng/độ tin cậy khi các quyết định xoá, giữ hoặc escalate được tự động hoá trong hệ thống thật.
+- Cách tốt nhất để nâng cấp là bổ sung một câu ngắn ở cuối mỗi mục: "Nếu mở rộng sang dữ liệu thực, cần kiểm tra lại bằng cách nào?" để nhấn mạnh kế hoạch xác minh và khả năng tái lập nghiên cứu.
+
 ## Giới hạn của thuật toán
 
 - **Hold thừa kế làm Completeness lý thuyết thấp hơn**: 102 delete / 40 retain / 16 escalate, so với 126 / 4 / 28 khi chỉ hold backup; đổi lại không có xoá nhầm (ablation sinh 24 false-delete).

@@ -40,3 +40,9 @@
 | t08-all | HOLD | OPEN_REQUESTS | 1/10 requests GO |
 
 **Audit:** `audit_log.jsonl` có 262 dòng, trong đó 2 dòng `review:*`.
+
+### Nhận xét phản biện
+
+- Bảng dữ liệu này đóng vai trò rất tốt trong việc minh hoạ một quy trình kiểm toán, vì nó tách rõ: quyết định theo request, hành động do người duyệt thực hiện, và hàng chờ còn lại. Điều này giúp người đọc thấy rằng "go/hold" không phải là chỉ một kết luận cuối cùng mà là kết quả của nhiều lớp kiểm tra và trách nhiệm.
+- Tuy nhiên, vì dữ liệu là synthetic và số dòng đánh dấu đã xử lý chỉ là 2 trên 56, bảng còn cho thấy một giới hạn quan trọng: hệ thống mô phỏng đang làm việc với một pipeline rất higly controlled, chứ chưa phản ánh áp lực thực tế như khối lượng review lớn, xung đột giữa các request, hay quyết định phải được phê chuẩn bởi nhiều bên.
+- Để tăng độ thuyết phục, nên bổ sung một cột hoặc ghi chú ngắn cho mỗi bảng về "tỷ lệ review thực sự đã xử lý / tổng hàng chờ" và "nếu không xử lý hết thì hệ thống sẽ làm gì". Điều này làm rõ mối liên hệ giữa các bảng và cho thấy nguy cơ delay hoặc unresolved case.

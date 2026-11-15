@@ -80,6 +80,12 @@ Khi chưa chắc, hệ thống chọn **không xoá** (xoá không hoàn tác, g
 - **DR-006 GO nhưng `data-catalog` vẫn REWORK**, và `a0123` (đã ký) nằm trong 4 cảnh báo lineage. Vì thế GO của DR-006 chỉ có nghĩa "workflow xoá hoàn tất theo catalog hiện tại"; nếu catalog sửa lại, cần chạy lại và duyệt lại.
 - `decision_log.csv` và `audit_log.jsonl` nối thêm dòng sau mỗi lần chạy; số liệu ở trên lấy bản ghi cuối của mỗi `scope`.
 
+### Nhận xét phản biện
+
+- Phần này làm rất rõ vai trò phân biệt giữa "quy trình" và "quyết định cuối cùng": hệ thống có thể đề xuất action, nhưng người duyệt mới là người ký, ghi log và gắn trách nhiệm. Đây là điểm mạnh vì nó tránh nhầm lẫn giữa automation và judgment.
+- Tuy nhiên, khi read như một mô hình quản trị dữ liệu, còn thiếu một lớp kiểm soát "phân bổ trách nhiệm" rõ hơn: ai có quyền override trong trường hợp hold thừa kế, ai có quyền bỏ qua catalog REWORK, và điều gì xảy ra nếu một quyết định của DPO bị nghi ngờ hoặc cần phê chuẩn lại sau khi catalog cập nhật.
+- Một cải tiến đáng làm là thêm một mục tiêu rõ ràng: "khi không chắc, ưu tiên không xoá" là đúng trong môi trường an toàn, nhưng cần mô tả thêm tiêu chí để xác định mức độ rủi ro và thời hạn phản hồi tối đa, để tránh việc hold kéo dài vô hạn trong thực tế.
+
 ## 7.6 Câu hỏi debate đã chuẩn bị
 
 - *Khi nào được từ chối xoá?* Khi có legal hold (R2/R3): ghi `reason_code` + nguồn luật + ngày gỡ hold dự kiến.
